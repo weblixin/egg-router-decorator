@@ -1,16 +1,16 @@
-
+'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _interopDefault(ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex.default : ex; }
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-const path = require('app/package/egg-aop-decorator/dist/path');
+var path = require('path');
 require('reflect-metadata');
-const util = require('util');
-const debug = _interopDefault(require('debug'));
-const isEqual = _interopDefault(require('lodash.isequal'));
-const uniqWith = _interopDefault(require('lodash.uniqwith'));
-const formidable = require('formidable');
+var util = require('util');
+var debug = _interopDefault(require('debug'));
+var isEqual = _interopDefault(require('lodash.isequal'));
+var uniqWith = _interopDefault(require('lodash.uniqwith'));
+var formidable = require('formidable');
 
 const ORIGIN_METHOD_METADATA = 'ORIGIN_METHOD_METADATA';
 const CONTROLLER_PREFIX_METADATA = 'CONTROLLER_PREFIX_METADATA';
@@ -46,22 +46,22 @@ exports.ClassFormattor = class {
         this.format();
     }
 };
-(function(EDataType) {
-    EDataType[EDataType.Any = 1] = 'Any';
-    EDataType[EDataType.Number = 2] = 'Number';
-    EDataType[EDataType.String = 3] = 'String';
-    EDataType[EDataType.Boolean = 4] = 'Boolean';
+(function (EDataType) {
+    EDataType[EDataType["Any"] = 1] = "Any";
+    EDataType[EDataType["Number"] = 2] = "Number";
+    EDataType[EDataType["String"] = 3] = "String";
+    EDataType[EDataType["Boolean"] = 4] = "Boolean";
 })(exports.EDataType || (exports.EDataType = {}));
-let RequestMethod;
-(function(RequestMethod) {
-    RequestMethod.ALL = 'all';
-    RequestMethod.GET = 'get';
-    RequestMethod.POST = 'post';
-    RequestMethod.PUT = 'put';
-    RequestMethod.DELETE = 'delete';
-    RequestMethod.PATCH = 'patch';
-    RequestMethod.OPTIONS = 'options';
-    RequestMethod.HEAD = 'head';
+var RequestMethod;
+(function (RequestMethod) {
+    RequestMethod["ALL"] = "all";
+    RequestMethod["GET"] = "get";
+    RequestMethod["POST"] = "post";
+    RequestMethod["PUT"] = "put";
+    RequestMethod["DELETE"] = "delete";
+    RequestMethod["PATCH"] = "patch";
+    RequestMethod["OPTIONS"] = "options";
+    RequestMethod["HEAD"] = "head";
 })(RequestMethod || (RequestMethod = {}));
 
 const log = debug('egg-aop-decorator:utils');
@@ -94,7 +94,7 @@ function defineMethodPath(method, path$$1, target, targetClass) {
     definedMethodPaths.push({ method, path: path$$1 });
     Reflect.defineMetadata(METHOD_PATH_METADATA, uniqWith(definedMethodPaths, isEqual), originMethod || target);
 }
-const generalParameterDecorator = type => (paramNameOrTarget, methodNameOrDataType, parameterIndex) => {
+const generalParameterDecorator = (type) => (paramNameOrTarget, methodNameOrDataType, parameterIndex) => {
     let paramName;
     let dataType;
     const decorator = (target, methodName, parameterIndex) => {
@@ -103,23 +103,25 @@ const generalParameterDecorator = type => (paramNameOrTarget, methodNameOrDataTy
             if (dataType === Date) {
                 dataType = parseDate;
             }
-        } else if (typeof dataType !== 'function') {
+        }
+        else if (typeof dataType !== 'function') {
             switch (dataType) {
                 case exports.EDataType.String:
-                    dataType = a => String(a);
+                    dataType = (a) => String(a);
                     break;
                 case exports.EDataType.Number:
-                    dataType = a => Number(a);
+                    dataType = (a) => Number(a);
                     break;
                 case exports.EDataType.Boolean:
-                    dataType = a => Boolean(a);
+                    dataType = (a) => Boolean(a);
                     break;
                 case exports.EDataType.Any:
                 default:
-                    dataType = a => a;
+                    dataType = (a) => a;
                     break;
             }
-        } else if (dataType === Date) {
+        }
+        else if (dataType === Date) {
             dataType = parseDate;
         }
         const params = Reflect.getMetadata(PARAMETER_METADATA, target.constructor, methodName) || [];
@@ -139,7 +141,7 @@ const generalParameterDecorator = type => (paramNameOrTarget, methodNameOrDataTy
     }
     return decorator;
 };
-const nullableDecorator = type => (target, methodName) => {
+const nullableDecorator = (type) => (target, methodName) => {
     Reflect.defineMetadata(type, { nullable: true }, target.constructor, methodName);
 };
 async function parseFiles(context) {
@@ -167,7 +169,8 @@ function formatter(dataType, paramName, from, context, nullable = false) {
     }
     try {
         return dataType(from === 'body' ? context.request.body[paramName] : context[from][paramName], context.params, context.queries, context.request.body, from, paramName);
-    } catch (e) {
+    }
+    catch (e) {
         return new dataType(from === 'body' ? context.request.body[paramName] : context[from][paramName], context.params, context.queries, context.request.body, from, paramName);
     }
 }
@@ -234,58 +237,57 @@ let g_router = {};
 function RouteShell(app) {
     const { router, config: { basePath = '', shouldParseParameters = true, tracing = false } = {} } = app;
     g_router = router;
-    [...controllerMap.values()].map(controller => {
+    [...controllerMap.values()].map((controller) => {
         const controllerPrefixs = [...(Reflect.getMetadata(CONTROLLER_PREFIX_METADATA, controller.constructor) || [''])];
         const isClassBodyParserIgnore = Reflect.getMetadata(BODYPARSER_METADATA, controller.constructor) || false;
-        return Object.getOwnPropertyNames(controller).filter(pName => pName !== 'constructor' && pName !== 'pathName' && pName !== 'fullPath').map(pName => {
+        return Object.getOwnPropertyNames(controller).filter((pName) => pName !== 'constructor' && pName !== 'pathName' && pName !== 'fullPath').map((pName) => {
             const methodPathPairs = [...(Reflect.getMetadata(METHOD_PATH_METADATA, controller[pName]) || [])];
             const isMethodBodyParserIgnore = Reflect.getMetadata(BODYPARSER_METADATA, controller[pName]) || isClassBodyParserIgnore;
             return controllerPrefixs.map(controllerPrefix => methodPathPairs.map(({ method, path: path$$1 }) => ({
                 controller, pName,
-                path: path.posix.join(basePath, controllerPrefix, path$$1).replace(/(^\.)|(\/$)/g, ''),
+                path: path.join(basePath, controllerPrefix, path$$1).replace(/(^\.)|(\/$)/g, ''),
                 method,
                 isBodyParserIgnore: isMethodBodyParserIgnore,
             }))).reduce((pre, cur) => pre.concat(cur), []);
-        })
-            .reduce((pre, cur) => pre.concat(cur), []);
+        }).reduce((pre, cur) => pre.concat(cur), []);
     }).reduce((pre, cur) => [...pre, ...cur], [])
         .sort((a, b) => {
-            if (a.path.length !== b.path.length) {
-                return b.path.length - a.path.length;
-            }
-            if (/\*$/.test(a.path)) {
-                return 1;
-            }
-            if (priority[a.method] !== priority[b.method]) {
-                return priority[b.method] - priority[a.method];
-            }
-            return a.path > b.path ? 1 : -1;
-        })
+        if (a.path.length !== b.path.length) {
+            return b.path.length - a.path.length;
+        }
+        if (/\*$/.test(a.path)) {
+            return 1;
+        }
+        if (priority[a.method] !== priority[b.method]) {
+            return priority[b.method] - priority[a.method];
+        }
+        return a.path > b.path ? 1 : -1;
+    })
         .forEach(({ controller, pName, path: path$$1, method, isBodyParserIgnore }) => {
-            if (path$$1 !== undefined && method !== undefined) {
-                app.logger.info(`[RouteMapping]${!isBodyParserIgnore ? ' [BodyParser]\t' : '\t\t'}${`[${method.toUpperCase()}]`.padEnd(8, ' ')} => ${path$$1}`);
-                async function wrap(...args) {
-                    let parameters = [];
-                    if (shouldParseParameters) {
-                        parameters = await getAllParam(this, controller.constructor, pName);
-                    }
-                    if (tracing) {
-                        this.state = this.state || {};
-                        this.state.tracingOperationName = `${controller.constructor.name}[${pName}]`;
-                        this.set('x-envoy-decorator-operation', this.state.tracingOperationName);
-                    }
-                    const warppedController = new controller.constructor(this);
-                    warppedController.isBodyParserIgnore = isBodyParserIgnore;
-                    const warpped = warppedController[pName](...parameters, ...args);
-                    return warpped;
+        if (path$$1 !== undefined && method !== undefined) {
+            app.logger.info(`[RouteMapping]${!isBodyParserIgnore ? ' [BodyParser]\t' : '\t\t'}${`[${method.toUpperCase()}]`.padEnd(8, ' ')} => ${path$$1}`);
+            async function wrap(...args) {
+                let parameters = [];
+                if (shouldParseParameters) {
+                    parameters = await getAllParam(this, controller.constructor, pName);
                 }
-                if (isBodyParserIgnore) {
-                    const paths = Reflect.getMetadata(BODYPARSER_METADATA, g_router) || [];
-                    Reflect.defineMetadata(BODYPARSER_METADATA, paths.concat([path$$1]), g_router);
+                if (tracing) {
+                    this.state = this.state || {};
+                    this.state.tracingOperationName = `${controller.constructor.name}[${pName}]`;
+                    this.set('x-envoy-decorator-operation', this.state.tracingOperationName);
                 }
-                router[method](path$$1, wrap);
+                const warppedController = new controller.constructor(this);
+                warppedController.isBodyParserIgnore = isBodyParserIgnore;
+                const warpped = warppedController[pName](...parameters, ...args);
+                return warpped;
             }
-        });
+            if (isBodyParserIgnore) {
+                const paths = Reflect.getMetadata(BODYPARSER_METADATA, g_router) || [];
+                Reflect.defineMetadata(BODYPARSER_METADATA, paths.concat([path$$1]), g_router);
+            }
+            router[method](path$$1, wrap);
+        }
+    });
 }
 const getBodyIgnores = () => {
     const paths = Reflect.getMetadata(BODYPARSER_METADATA, g_router) || [];

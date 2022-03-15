@@ -45,6 +45,5 @@
     "url": "https://github.com/weblixin/egg-router-decorator/issues"
   },
   "homepage": "https://github.com/weblixin/egg-router-decorator#readme",
-  "types": "dist/index.d.ts",
-  "module": "dist/index.min.esm.js"
+  "types": "dist/index.d.ts"
 }
