@@ -1,0 +1,14 @@
+import { Context } from 'egg';
+import 'reflect-metadata';
+export declare const Param: import("./typeDefine").AutoParameterDecorator;
+export declare const param: import("./typeDefine").AutoParameterDecorator;
+export declare const Query: import("./typeDefine").AutoParameterDecorator;
+export declare const query: import("./typeDefine").AutoParameterDecorator;
+export declare const Body: import("./typeDefine").AutoParameterDecorator;
+export declare const body: import("./typeDefine").AutoParameterDecorator;
+export declare const File: import("./typeDefine").AutoParameterDecorator;
+export declare const file: import("./typeDefine").AutoParameterDecorator;
+export declare const Files: import("./typeDefine").AutoParameterDecorator;
+export declare const files: import("./typeDefine").AutoParameterDecorator;
+export declare const Nullable: ParameterDecorator;
+export declare function getAllParam(context: Context, controller: any, methodName: string): Promise<any[]>;
